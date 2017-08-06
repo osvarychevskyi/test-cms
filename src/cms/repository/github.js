@@ -47,18 +47,13 @@ class GitHub {
     }
 
     get(path) {
+        var path = path.substr('cms://'.length);
         var repo = this.gh.getRepo(this.username, this.getBaseDir())
-        repo.getContents('master', path, true, function (err, data) {
-            var a = '123';
-        }).then(function({data}){
-            var a = '123';
-        });
-        //var lstat = fs.lstatSync(filePath);
-        // if (!lstat.isFile()) {
-        //     throw sprintf("Requested path: %s is not a file.", filePath);
-        // }
-        //var content = fs.readFileSync(filePath, 'utf8');
-        return content;
+        return repo
+            .getContents('master', path, true)
+            .then(function({data}){
+                return data;
+            });
     }
 
     getFilesByDir(path) {

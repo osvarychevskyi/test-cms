@@ -1,6 +1,7 @@
 import fileRepository from './repository/file';
 import gitRepository from './repository/git';
 import gitHubRepository from './repository/github'
+import httpRepository from './repository/http'
 
 class Repository {
     constructor(config) {
@@ -14,6 +15,8 @@ class Repository {
             case 'github':
                 return new gitHubRepository(config);
                 break;
+            case 'http':
+                return new httpRepository(config);
             case 'bitbucket':
                 break;
         }

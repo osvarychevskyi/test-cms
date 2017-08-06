@@ -1,11 +1,9 @@
-var yaml = require('js-yaml');
-var yamlinc = require('yaml-include');
+var $RefParser = require('json-schema-ref-parser');
 
 class Cms {
     constructor(repository) {
         this.repository = repository;
         this.pagesDir = 'pages';
-        this._configureYamlinc();
     }
 
     /**
@@ -14,31 +12,36 @@ class Cms {
      * @returns {*}
      */
     getPage(path) {
-        var pagePath = this.pagesDir + path + '.yaml';
-        var content = this.repository.get(pagePath);
-        var page = yaml.load(content, { schema: yamlinc.YAML_INCLUDE_SCHEMA });
-
-        return page;
+        var pagePath = 'cms://' + this.pagesDir + path + '.yaml';
+        var cmsResolver = this.getResolver();
+        return $RefParser
+            .dereference(pagePath,
+                {
+                    resolve: {
+                        cms: cmsResolver
+                    }
+                })
+            .then(function(schema) {
+                return schema;
+            });
     }
 
-    /**
-     * Sets the correct calculation of base path
-     * Injects into yamlinc a possibility to load files content from different repositories types
-     *
-     * @private
-     */
-    _configureYamlinc() {
+    getResolver() {
         var repository = this.repository;
-        yamlinc.getBasePath = function () {
-            return repository.getBaseDir();
+        return {
+            order: 1,
+            canRead: /^cms:/i,
+            read: function(file) {
+                return repository.get(file.url)
+                .then(function(data) {
+                    if (data) {
+                        return data;
+                    } else {
+                        throw new Error("No data!");
+                    }
+                });
+            }
         };
-        yamlinc.YamlIncludeFileType.construct = function (fileRelativePath)
-        {
-            var src = repository.get(fileRelativePath, 'utf8');
-            var included = yaml.load(src, { schema: yamlinc.YAML_INCLUDE_SCHEMA });
-
-            return included;
-        }
     }
 }
 

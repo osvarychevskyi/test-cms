@@ -41,14 +41,24 @@ class File {
     }
 
     get(path) {
+        var path = path.substr('cms://'.length);
         var filePath = p.join(this.getBaseDir(), path);
-        var lstat = fs.lstatSync(filePath);
-        if (!lstat.isFile()) {
-            throw sprintf("Requested path: %s is not a file.", filePath);
-        }
-        var content = fs.readFileSync(filePath, 'utf8');
-        return content;
+
+        return new Promise(function(resolve, reject) {
+            // var lstat = fs.lstatSync(filePath);
+            // if (!lstat.isFile()) {
+            //     throw sprintf("Requested path: %s is not a file.", filePath);
+            // }
+            fs.readFile(filePath, 'utf8', function(err, data){
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(data);
+                }
+            });
+        });
     }
+
 
     getFilesByDir(path) {
         var filePath = p.join(this.getBaseDir(), path);
