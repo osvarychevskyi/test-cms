@@ -16,9 +16,9 @@ var appDir = path.dirname(require.main.filename);
 const repository = new Repository({
     type: 'github',
     repositoryName: 'test-cms-data',
-    username: 'osvarychevskyi',
+    username: 'username',
     //password: 'NotFoo'
-    token: '66f48ccc5a0ea9e446b1430beb5bb50b2d3c0336'
+    token: 'tcken'
 });
 
 //console.log(repository.getFilesByDir('pages'));
