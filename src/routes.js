@@ -1,49 +1,76 @@
 import { Router } from 'express';
-import Cms from './cms/cms';
-import Repository from './cms/repository'
+import { CmsFile } from 'radaller-core';
 
-const url = require('url');
-const routes = Router();
 const path = require('path');
-var appDir = path.dirname(require.main.filename);
+const routes = Router();
+const basePath = path.normalize(process.env.BASE_PATH);
 
-
-// const repository = new Repository({
-//     type: 'file',
-//     baseDir: path.join(appDir, '/../data')
-// });
-
-
-const repository = new Repository({
-    type: 'http',
-    path: 'https://raw.githubusercontent.com/osvarychevskyi/test-cms-data/master'
+const client = new CmsFile({
+    basePath: basePath
 });
 
-//console.log(repository.getFilesByDir('pages'));
-const cms = new Cms(repository);
-
-/**
- * GET home page
- */
-routes.get('/favicon.ico', (req, res) => {
-  res.status(400);
+routes.options('/*', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, HEAD');
+    res.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept, authorization');
+    res.status(200);
+    res.end("");
 });
 
 routes.get('/*', (req, res) => {
-    const requestUrl = url.parse(req.originalUrl);
-    cms.getPage(requestUrl.href)
-        .then(function(data) {
-            return JSON.stringify(data);
-        })
+    client.get(req.path, req.query)
         .then(function (data) {
             res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Access-Control-Allow-Origin', '*');
             res.end(data);
         })
         .catch(function (e) {
-            res.status(500);
+            console.log(e);
+            res.status(404);
             res.end(JSON.stringify(e));
         });
 });
 
+routes.post('/*', (req, res) => {
+    client.post(req.path, req.body)
+        .then(function (data) {
+            res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            console.log(data);
+            res.end(data);
+        })
+        .catch(function (e) {
+            console.log(e);
+            res.status(404);
+            res.end(JSON.stringify(e));
+        });
+});
+
+routes.put('/*', (req, res) => {
+    client.put(req.path, req.body)
+        .then(function (data) {
+            res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.end(data);
+        })
+        .catch(function (e) {
+            res.status(404);
+            res.end(JSON.stringify(e));
+        });
+});
+
+routes.delete('/*', (req, res) => {
+    client.remove(req.path)
+        .then(function (data) {
+            res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.end(data);
+        })
+        .catch(function (e) {
+            res.status(404);
+            res.end(JSON.stringify(e));
+        });
+});
 
 export default routes;

@@ -32,21 +32,16 @@
     "eslint"
   ],
   "dependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-preset-env": "^1.4.0",
     "body-parser": "^1.17.1",
-    "directory-tree": "^2.0.0",
-    "express": "^4.15.2",
-    "github-api": "^3.0.0",
-    "json-schema-ref-parser": "^3.2.0",
+    "express": "^4.15.4",
     "morgan": "^1.7.0",
-    "node-fetch": "^1.7.1",
-    "rimraf": "^2.6.1",
-    "sprintf-js": "^1.1.1",
-    "twig": "~0.10.3"
+    "radaller-core": "file:../radaller-core",
+    "rimraf": "^2.6.1"
   },
   "devDependencies": {
+    "babel-cli": "^6.24.1",
     "babel-jest": "^20.0.0",
+    "babel-preset-env": "^1.4.0",
     "babel-register": "^6.24.1",
     "dotenv": "^4.0.0",
     "eslint": "^3.19.0",
