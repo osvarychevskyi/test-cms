@@ -19,6 +19,9 @@ routes.options('/*', (req, res) => {
 });
 
 routes.get('/*', (req, res) => {
+    if (req.query && req.query.filter) {
+        req.query.filter = JSON.parse(req.query.filter);
+    }
     client.get(req.path, req.query)
         .then(function (data) {
             res.setHeader('Content-Type', 'application/json');
