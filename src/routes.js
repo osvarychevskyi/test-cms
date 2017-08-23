@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { CmsFile } from 'radaller-core';
+import FileCms from 'radaller-core';
 
 const path = require('path');
 const routes = Router();
 const basePath = path.normalize(process.env.BASE_PATH);
 
-const client = new CmsFile({
+const cms = new FileCms({
     basePath: basePath
 });
 
@@ -22,7 +22,7 @@ routes.get('/*', (req, res) => {
     if (req.query && req.query.filter) {
         req.query.filter = JSON.parse(req.query.filter);
     }
-    client.get(req.path, req.query)
+    cms.get(req.path, req.query)
         .then(function (data) {
             res.setHeader('Content-Type', 'application/json');
             res.setHeader('Access-Control-Allow-Origin', '*');
@@ -36,7 +36,7 @@ routes.get('/*', (req, res) => {
 });
 
 routes.post('/*', (req, res) => {
-    client.post(req.path, req.body)
+    cms.post(req.path, req.body)
         .then(function (data) {
             res.setHeader('Content-Type', 'application/json');
             res.setHeader('Access-Control-Allow-Origin', '*');
@@ -51,7 +51,7 @@ routes.post('/*', (req, res) => {
 });
 
 routes.put('/*', (req, res) => {
-    client.put(req.path, req.body)
+    cms.put(req.path, req.body)
         .then(function (data) {
             res.setHeader('Content-Type', 'application/json');
             res.setHeader('Access-Control-Allow-Origin', '*');
@@ -64,7 +64,7 @@ routes.put('/*', (req, res) => {
 });
 
 routes.delete('/*', (req, res) => {
-    client.remove(req.path)
+    cms.remove(req.path)
         .then(function (data) {
             res.setHeader('Content-Type', 'application/json');
             res.setHeader('Access-Control-Allow-Origin', '*');
