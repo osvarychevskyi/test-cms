@@ -3,3 +3,4 @@ data
 .idea
 .env
 dist
+package-lock.json
